@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Your Card</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body class="viewerBody">
+  <div id="viewer" class="viewerWrap hidden">
+    <!-- Desktop -->
+    <div id="desk" class="desk hidden" tabindex="0" role="button" aria-label="Open card (click)">
+      <div class="hinge">
+        <div class="inside">
+          <div class="left">
+            <img id="deskLeftImg" alt="Inside left image" />
+          </div>
+          <div class="right">
+            <div id="deskMsg" class="message"></div>
+          </div>
+        </div>
+        <div class="cover" aria-hidden="true">
+          <img id="deskCoverImg" alt="Front of card" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile -->
+    <div id="mobile" class="mobile hidden" tabindex="0" role="button" aria-label="Tap to change view">
+      <div class="pane" id="paneFront">
+        <img id="mobileFront" alt="Front image" />
+      </div>
+      <div class="pane hidden" id="paneMsg">
+        <div id="mobileMsg" class="mobileMsg message"></div>
+      </div>
+      <div class="pane hidden" id="paneSecond">
+        <img id="mobileSecond" alt="Second image" />
+      </div>
+      <div class="hint">Tap to switch</div>
+    </div>
+  </div>
+
+  <div id="nf" class="stage">
+    <div class="card404">
+      <div class="top">
+        <h2>Card not found</h2>
+        <p>This link doesn’t contain any card data (or it’s invalid).</p>
+        <p id="nfReason" class="small" style="margin-top: 10px;"></p>
+      </div>
+      <div class="actions">
+        <a class="pill" href="./">Go to generator</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/common.js"></script>
+  <script src="assets/card.js"></script>
+</body>
+</html>

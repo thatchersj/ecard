@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Virtual Card Generator</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div class="brand">
+        <h1>Virtual Card Generator</h1>
+        <p>Create a shareable link that opens an interactive virtual card. Works as a static site on GitHub Pages.</p>
+      </div>
+      <div class="pill">Tip: Add a falling icon like ❄️ or ✨</div>
+    </div>
+
+    <div class="grid">
+      <div class="panel card">
+        <h2 style="margin:0 0 10px; font-size:18px;">Card details</h2>
+
+        <div class="row cols2">
+          <div>
+            <label for="frontSelect">Front image</label>
+            <select id="frontSelect"></select>
+            <div id="frontUrlWrap" class="hidden" style="margin-top:10px;">
+              <label for="frontUrl">Front image URL</label>
+              <input id="frontUrl" type="url" placeholder="https://example.com/image.jpg" />
+              <div class="small">Must be a direct image link (png/jpg/gif/webp/svg).</div>
+            </div>
+          </div>
+
+          <div>
+            <label for="secondSelect">Second image (inside left / mobile cycle)</label>
+            <select id="secondSelect"></select>
+            <div id="secondUrlWrap" class="hidden" style="margin-top:10px;">
+              <label for="secondUrl">Second image URL</label>
+              <input id="secondUrl" type="url" placeholder="https://example.com/image.jpg" />
+              <div class="small">Optional; must be a direct image link.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row cols2" style="margin-top: 2px;">
+          <div>
+            <label for="iconInput">Falling icon (single character)</label>
+            <input id="iconInput" type="text" inputmode="text" maxlength="4" placeholder="❄️" />
+            <div class="small">Leave empty for none.</div>
+          </div>
+          <div>
+            <label>Shareable link</label>
+            <div class="small">Click “Generate link” to create a URL to send.</div>
+          </div>
+        </div>
+
+        <hr class="sep" />
+
+        <h2 style="margin:0 0 8px; font-size:18px;">Inside message</h2>
+        <div class="toolbar" aria-label="Editor toolbar">
+          <button class="toolbtn" id="boldBtn" type="button"><b>B</b></button>
+          <button class="toolbtn" id="italicBtn" type="button"><i>I</i></button>
+          <button class="toolbtn" id="underlineBtn" type="button"><u>U</u></button>
+          <span style="width:8px;"></span>
+          <button class="toolbtn" id="h1Btn" type="button">H1</button>
+          <button class="toolbtn" id="h2Btn" type="button">H2</button>
+          <button class="toolbtn" id="pBtn" type="button">P</button>
+          <span style="width:8px;"></span>
+          <button class="toolbtn" id="ulBtn" type="button">• List</button>
+          <button class="toolbtn" id="olBtn" type="button">1. List</button>
+          <button class="toolbtn" id="quoteBtn" type="button">❝ Quote</button>
+          <button class="toolbtn" id="hrBtn" type="button">— Line</button>
+          <span style="width:8px;"></span>
+          <button class="toolbtn" id="linkBtn" type="button">🔗 Link</button>
+          <label class="toolbtn" style="display:inline-flex; align-items:center; gap:8px;" title="Text color">
+            🎨 <input id="colorInput" type="color" value="#ffffff" />
+          </label>
+        </div>
+
+        <div id="editor" class="editor" contenteditable="true" aria-label="Message editor"></div>
+
+        <div class="btnrow" style="margin-top: 14px;">
+          <button id="generateBtn" type="button">Generate link</button>
+        </div>
+
+        <div id="errWrap" class="notice hidden" style="margin-top: 12px;">
+          <b>Couldn’t generate</b>
+          <div id="errText" style="margin-top:6px;"></div>
+        </div>
+      </div>
+
+      <div class="panel card">
+        <h2 style="margin:0 0 10px; font-size:18px;">Output</h2>
+        <div class="notice">
+          The card link encodes the message + image selections in the URL parameter <code>c=</code>.
+          Anyone with the link can view the card.
+        </div>
+
+        <div id="outWrap" class="hidden" style="margin-top: 12px;">
+          <div class="small" style="margin: 0 0 6px;">Your link:</div>
+          <div class="codebox" id="outUrl" style="user-select: all;"></div>
+
+          <div class="btnrow" style="margin-top: 12px;">
+            <button class="secondary" id="copyBtn" type="button">Copy link</button>
+            <button class="secondary" id="openBtn" type="button">Open card</button>
+          </div>
+
+          <div class="small" style="margin-top: 10px;">
+            If you update the site URL (different repo name/domain), just regenerate the link on that site.
+          </div>
+        </div>
+
+        <hr class="sep" />
+
+        <div class="notice">
+          <b>How it behaves</b>
+          <ul style="margin:10px 0 0; padding-left: 18px; color: rgba(229,231,235,.88); line-height:1.45;">
+            <li><b>Desktop:</b> click the card to open it (front → inside images/message).</li>
+            <li><b>Mobile:</b> tap to cycle: front image → message → second image (if any).</li>
+            <li><b>Falling icon:</b> if set, the icon drifts down the page.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 18px; color: rgba(229,231,235,.75); font-size: 12px;">
+      Built-in images live in <code>/images</code>. Add more and update <code>images/manifest.json</code>.
+    </div>
+  </div>
+
+  <script src="assets/common.js"></script>
+  <script src="assets/generator.js"></script>
+</body>
+</html>
