@@ -75,6 +75,7 @@ a:hover{color:#bfdbfe}
   border-radius: var(--radius);
   box-shadow: 0 12px 30px rgba(0,0,0,.22);
   backdrop-filter: blur(10px);
+  min-width: 0;
 }
 
 .grid{
@@ -168,14 +169,19 @@ button:active{transform: translateY(1px)}
   line-height:1.45;
 }
 
-.codebox{
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+.codebox{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 12px;
   padding: 10px 12px;
   border-radius: 12px;
   background: rgba(0,0,0,.35);
   border: 1px solid rgba(255,255,255,.14);
-  overflow:auto;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
   white-space: nowrap;
 }
 
