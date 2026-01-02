@@ -162,6 +162,14 @@ async function copyLink() {
   }
 }
 
+function shareWhatsApp() {
+  const url = el("outUrl").textContent;
+  if (!url) return;
+  const text = `Here's your card: ${url}`;
+  const wa = `https://wa.me/?text=${encodeURIComponent(text)}`;
+  window.open(wa, "_blank", "noopener,noreferrer");
+}
+
 function showError(msg) {
   el("errText").textContent = msg;
   el("errWrap").classList.remove("hidden");
@@ -179,4 +187,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     const url = el("outUrl").textContent;
     if (url) window.open(url, "_blank", "noopener,noreferrer");
   });
+
+  el("waBtn").addEventListener("click", shareWhatsApp);
 });

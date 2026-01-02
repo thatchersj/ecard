@@ -22,11 +22,15 @@ function setImg(imgEl, url) {
 function renderDesktop(payload) {
   const desk = el("desk");
   const coverImg = el("deskCoverImg");
-  const leftImg = el("deskLeftImg");
+  const backImg = el("deskBackImg");
+  const backFallback = el("deskBackFallback");
   const msg = el("deskMsg");
 
   setImg(coverImg, resolveImage(payload.front));
-  setImg(leftImg, resolveImage(payload.second));
+  const backUrl = resolveImage(payload.second);
+  setImg(backImg, backUrl);
+  // Show a friendly fallback if no second image was provided
+  backFallback.classList.toggle("hidden", !!backUrl);
 
   msg.innerHTML = sanitizeMessageHTML(payload.messageHtml || "");
   desk.classList.remove("open");
