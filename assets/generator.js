@@ -136,14 +136,28 @@ function looksLikeImageUrl(url) {
 
 function validateImageUrl(url) {
   return new Promise((resolve) => {
-    if (!looksLikeImageUrl(url)) return resolve({ok:false, reason:"That doesn't look like an image URL (png/jpg/gif/webp/svg)."});
+    if (!looksLikeImageUrl(url)) {
+      return resolve({ ok: false, reason: "That doesn't look like an image URL (png/jpg/gif/webp/svg)." });
+    }
+
+    let settled = false;
+    const finish = (result) => {
+      if (settled) return;
+      settled = true;
+      resolve(result);
+    };
+
     const img = new Image();
-    img.onload = () => resolve({ok:true});
-    img.onerror = () => resolve({ok:false, reason:"Couldn't load that image URL. Check the link."});
+    img.onload = () => finish({ ok: true });
+    img.onerror = () => finish({ ok: false, reason: "Couldn't load that image URL. Check the link." });
     img.referrerPolicy = "no-referrer";
     img.src = url;
+
+    // Safety timeout (some mobile browsers can hang on broken URLs)
+    setTimeout(() => finish({ ok: false, reason: "Image URL timed out. Check the link." }), 6000);
   });
 }
+
 
 async function generate() {
   const front = parseImageSelection(el("frontSelect"), el("frontUrl"));

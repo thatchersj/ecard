@@ -772,3 +772,49 @@ function sanitizeMessageHTML(inputHtml) {
 }
 
 
+
+
+/* Responsive helper */
+function isMobile() {
+  try {
+    return window.matchMedia && window.matchMedia("(max-width: 860px)").matches;
+  } catch {
+    return false;
+  }
+}
+
+/* Falling icon overlay (snowflake-inspired) */
+function makeFallingIcons(char) {
+  const ch = (char || "").trim();
+  if (!ch) return;
+
+  // Remove existing layer if any
+  const old = document.getElementById("fallLayer");
+  if (old) old.remove();
+
+  const layer = document.createElement("div");
+  layer.id = "fallLayer";
+  layer.className = "fallLayer";
+  document.body.appendChild(layer);
+
+  const count = 28; // light enough for mobile
+  for (let i = 0; i < count; i++) {
+    const span = document.createElement("span");
+    span.className = "fallIcon";
+    span.textContent = ch;
+
+    const size = 12 + Math.random() * 26; // px
+    const left = Math.random() * 100; // vw
+    const dur = 7 + Math.random() * 10; // s
+    const delay = -Math.random() * dur; // negative to stagger
+    const sway = (Math.random() * 80 - 40); // px
+
+    span.style.left = left + "vw";
+    span.style.fontSize = size + "px";
+    span.style.animationDuration = dur + "s, " + (3 + Math.random() * 4) + "s";
+    span.style.animationDelay = delay + "s, " + (-Math.random() * 4) + "s";
+    span.style.setProperty("--sway", sway + "px");
+
+    layer.appendChild(span);
+  }
+}

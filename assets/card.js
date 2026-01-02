@@ -86,7 +86,7 @@ window.addEventListener("DOMContentLoaded", () => {
   let payload;
   try {
     payload = decodeCardPayload(token);
-    if (!payload || payload.v !== 1) throw new Error("Unsupported payload version");
+    if (!payload || (payload.v !== 1 && payload.v !== 2)) throw new Error("Unsupported payload version");
   } catch (e) {
     return show404("Invalid or corrupted card data.");
   }

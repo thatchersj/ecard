@@ -501,3 +501,28 @@ button:active{transform: translateY(1px)}
 
 /* Prevent page scrolling on viewer */
 .viewerBody{overflow:hidden;}
+
+
+/* Falling icon overlay */
+.fallLayer{
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 9999;
+}
+.fallIcon{
+  position: absolute;
+  top: -12vh;
+  opacity: .9;
+  will-change: transform;
+  animation-name: fall, sway;
+  animation-timing-function: linear, ease-in-out;
+  animation-iteration-count: infinite, infinite;
+}
+
+@keyframes sway{
+  0%{ transform: translateX(0); }
+  50%{ transform: translateX(var(--sway, 0px)); }
+  100%{ transform: translateX(0); }
+}
