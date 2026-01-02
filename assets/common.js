@@ -1,18 +1,16 @@
 /* Common utilities (no dependencies) */
 
 function base64UrlEncode(str) {
-  const utf8 = new TextEncoder().encode(str);
-  let bin = "";
-  utf8.forEach(b => bin += String.fromCharCode(b));
-  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+  // UTF-8 safe base64url encoding with wide browser support (no TextEncoder required)
+  const b64 = btoa(unescape(encodeURIComponent(str)));
+  return b64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
 }
 
 function base64UrlDecode(b64url) {
   const b64 = b64url.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((b64url.length + 3) % 4);
   const bin = atob(b64);
-  const bytes = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-  return new TextDecoder().decode(bytes);
+  // UTF-8 safe decode (no TextDecoder required)
+  return decodeURIComponent(escape(bin));
 }
 
 function encodeCardPayload(obj) {
