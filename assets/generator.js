@@ -60,6 +60,36 @@ function cmd(command, value=null){
   el("editor").focus();
 }
 
+
+function getCurrentBlock() {
+  const editor = el("editor");
+  const sel = window.getSelection && window.getSelection();
+  if (!sel || sel.rangeCount === 0) return null;
+
+  let node = sel.anchorNode;
+  if (!node) return null;
+  if (node.nodeType === Node.TEXT_NODE) node = node.parentElement;
+
+  while (node && node !== editor) {
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      const tag = node.tagName;
+      if (["P","DIV","H1","H2","H3","H4","LI","BLOCKQUOTE"].includes(tag)) return node;
+    }
+    node = node.parentElement;
+  }
+  return null;
+}
+
+function setBlockAlignment(alignClass) {
+  const block = getCurrentBlock();
+  if (!block) return;
+
+  block.classList.remove("align-left","align-center","align-right","align-justify");
+  if (alignClass) block.classList.add(alignClass);
+
+  // Nudge selection to keep editing smooth
+  el("editor").focus();
+}
 function setupEditor() {
   el("boldBtn").addEventListener("click", () => cmd("bold"));
   el("italicBtn").addEventListener("click", () => cmd("italic"));
@@ -67,6 +97,10 @@ function setupEditor() {
   el("h1Btn").addEventListener("click", () => cmd("formatBlock", "h1"));
   el("h2Btn").addEventListener("click", () => cmd("formatBlock", "h2"));
   el("pBtn").addEventListener("click", () => cmd("formatBlock", "p"));
+  el("alignLeftBtn").addEventListener("click", () => setBlockAlignment("align-left"));
+  el("alignCenterBtn").addEventListener("click", () => setBlockAlignment("align-center"));
+  el("alignRightBtn").addEventListener("click", () => setBlockAlignment("align-right"));
+  el("alignJustifyBtn").addEventListener("click", () => setBlockAlignment("align-justify"));
   el("ulBtn").addEventListener("click", () => cmd("insertUnorderedList"));
   el("olBtn").addEventListener("click", () => cmd("insertOrderedList"));
   el("quoteBtn").addEventListener("click", () => cmd("formatBlock", "blockquote"));

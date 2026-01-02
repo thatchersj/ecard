@@ -380,12 +380,26 @@ button:active{transform: translateY(1px)}
   padding: 26px;
 }
 .message{
-  max-width: 100%;
+  width: min(600px, 100%);
+  margin: 0 auto;
   max-height: 100%;
   overflow:auto;
   padding-right: 6px;
-  text-align:center;
+  /* Default alignment; per-line alignment is handled via classes like .align-center */
+  text-align:left;
 }
+
+/* Per-line text alignment (applied on block elements in the editor) */
+.message :where(.align-left){text-align:left;}
+.message :where(.align-center){text-align:center;}
+.message :where(.align-right){text-align:right;}
+.message :where(.align-justify){text-align:justify;}
+
+/* Make the editor preview match the viewer */
+.editor :where(.align-left){text-align:left;}
+.editor :where(.align-center){text-align:center;}
+.editor :where(.align-right){text-align:right;}
+.editor :where(.align-justify){text-align:justify;}
 .message :where(p,ul,ol){margin: 0 0 12px; line-height:1.5}
 .message :where(h1){font-size: 26px; margin: 0 0 12px}
 .message :where(h2){font-size: 20px; margin: 0 0 10px}
