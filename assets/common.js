@@ -651,3 +651,124 @@ function resolveImage(imgObj) {
 }
 
 
+// Message HTML sanitizer
+// Keeps a small, safe subset of formatting tags and the alignment classes:
+//   align-left | align-center | align-right | align-justify
+// Allows inline color styles from the editor.
+function sanitizeMessageHTML(inputHtml) {
+  const html = (inputHtml || "").toString();
+  // Quick return for empty
+  if (!html.trim()) return "";
+
+  const allowedTags = new Set([
+    "H1","H2","H3","H4",
+    "P","DIV","SPAN","BR",
+    "B","STRONG","I","EM","U",
+    "UL","OL","LI",
+    "BLOCKQUOTE","HR",
+    "A"
+  ]);
+
+  const allowedAlignClasses = new Set(["align-left","align-center","align-right","align-justify"]);
+
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(`<div>${html}</div>`, "text/html");
+  const root = doc.body.firstElementChild;
+
+  function cleanStyle(styleText) {
+    if (!styleText) return "";
+    // Only keep color-related declarations
+    const keep = [];
+    const parts = styleText.split(";");
+    for (const part of parts) {
+      const [rawProp, rawVal] = part.split(":");
+      if (!rawProp || !rawVal) continue;
+      const prop = rawProp.trim().toLowerCase();
+      const val = rawVal.trim();
+      if (prop === "color") {
+        keep.push(`${prop}:${val}`);
+      }
+    }
+    return keep.join(";");
+  }
+
+  function sanitizeNode(node) {
+    if (node.nodeType === Node.TEXT_NODE) return;
+    if (node.nodeType !== Node.ELEMENT_NODE) {
+      node.remove();
+      return;
+    }
+
+    const tag = node.tagName;
+
+    // Drop disallowed elements but keep their text/children
+    if (!allowedTags.has(tag)) {
+      const parent = node.parentNode;
+      while (node.firstChild) parent.insertBefore(node.firstChild, node);
+      node.remove();
+      return;
+    }
+
+    // Strip attributes aggressively; we'll add back a tiny safe subset.
+    // This avoids style/layout/script injection via unexpected attributes.
+    const origClass = node.getAttribute("class") || "";
+    const origStyle = node.getAttribute("style") || "";
+    const origHref  = node.getAttribute("href") || "";
+
+    // Remove everything, then add back what we explicitly allow.
+    const attrs = Array.from(node.attributes || []);
+    for (const a of attrs) node.removeAttribute(a.name);
+
+    // Class: keep only alignment classes
+    {
+      const classes = origClass
+        .split(/\s+/)
+        .filter(Boolean)
+        .filter(c => allowedAlignClasses.has(c));
+      if (classes.length) node.setAttribute("class", classes.join(" "));
+    }
+
+    // Style: keep only color
+    {
+      const cleaned = cleanStyle(origStyle);
+      if (cleaned) node.setAttribute("style", cleaned);
+    }
+
+    // <font color="..."> can be produced by execCommand in some browsers.
+    if (tag === "FONT") {
+      // (FONT isn't in allowedTags currently, but just in case)
+      node.remove();
+      return;
+    }
+
+    // Links
+    if (tag === "A") {
+      const href = (origHref || "").trim();
+      const safe = /^https?:\/\//i.test(href) || /^mailto:/i.test(href);
+      if (!safe) {
+        // Replace link with its text content
+        const parent = node.parentNode;
+        const text = doc.createTextNode(node.textContent || "");
+        parent.insertBefore(text, node);
+        node.remove();
+        return;
+      }
+      node.setAttribute("href", href);
+      node.setAttribute("target", "_blank");
+      node.setAttribute("rel", "noopener noreferrer");
+    }
+
+    // Recurse
+    const children = Array.from(node.childNodes);
+    for (const child of children) sanitizeNode(child);
+  }
+
+  // Walk depth-first
+  const kids = Array.from(root.childNodes);
+  for (const n of kids) sanitizeNode(n);
+
+  // Normalize: ensure we don't leave empty wrapper-only whitespace nodes
+  return root.innerHTML;
+}
+
+
