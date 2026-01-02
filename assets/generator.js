@@ -166,12 +166,11 @@ async function generate() {
   const messageHtml = sanitizeMessageHTML(rawHtml);
 
   const payload = {
-    v: 1,
+    v: 2,
     front,
     second,
     messageHtml,
-    icon,
-    created: new Date().toISOString()
+    icon
   };
 
   const token = encodeCardPayload(payload);
